@@ -30,6 +30,7 @@ export default {
   },
   methods: {
     download () {
+      this.$store.commit('SET_LOADING', true)
       dialog.showSaveDialog({
         defaultPath: 'kaleido_wallpapers'
       }, (dirPath) => {
@@ -39,10 +40,15 @@ export default {
           dirPath
         })
         if (res) {
+          this.$store.commit('CLEAR_PRELOAD_WALLPAPERS')
           dialog.showMessageBox({
+            title: 'Success!',
             message: res,
+            detail: `All the wallpapers have been saved in path \n"${dirPath}"`,
             buttons: ['OK']
           })
+          this.$store.commit('SET_LOADING', false)
+          this.$router.push('/')
         }
       })
     },

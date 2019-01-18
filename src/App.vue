@@ -2,18 +2,22 @@
   <div id="app">
     <LoadWallpaper />
     <Header />
-    <router-view></router-view>
+    <router-view v-loading="loading"></router-view>
   </div>
 </template>
 
 <script>
 import LoadWallpaper from './components/LoadWallpaper'
 import Header from './components/Header'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     LoadWallpaper,
     Header
+  },
+  computed: {
+    ...mapState(['loading'])
   }
 }
 </script>

@@ -38,12 +38,14 @@ export default {
     })
     webview.addEventListener('did-start-loading', () => {
       this.progress = 0
+      this.$store.commit('SET_LOADING', true)
     })
     webview.addEventListener('did-finish-load', () => {
       this.progress = 100
       console.log('Loading finished!')
       setTimeout(() => {
         this.showProgress = false
+        this.$store.commit('SET_LOADING', false)
       }, 1000)
     })
     webview.addEventListener('dom-ready', () => {
@@ -84,7 +86,7 @@ export default {
 .load-wallpaper {
   width: 100%;
   position: absolute;
-  z-index: 1000;
+  z-index: 3000;
   &-progress {
     border-radius: 0;
     div {

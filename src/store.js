@@ -13,9 +13,13 @@ export default new Vuex.Store({
     currentWebviewSrc: 'http://wallpaperswide.com/page/1',
     webviewSrc: 'http://wallpaperswide.com/page/1',
     selectedWallpapers: [],
-    preloadWallpapers: []
+    preloadWallpapers: [],
+    loading: false
   },
   mutations: {
+    SET_LOADING (_state, val) {
+      _state.loading = val
+    },
     LOAD_CATEGORY (_state, { src, cate }) {
       _state.loadedCategories[src] = cate
       _state.onShowWallpapers = cate.wallpapers
@@ -56,6 +60,9 @@ export default new Vuex.Store({
     },
     RESET_SELECTED_ON_SHOW_WALLPAPERS (_state) {
       _state.selectedWallpapers = []
+    },
+    CLEAR_PRELOAD_WALLPAPERS (_state) {
+      _state.preloadWallpapers = []
     }
   },
   getters: {
