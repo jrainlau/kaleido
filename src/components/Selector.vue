@@ -1,6 +1,6 @@
 <template>
   <div class="selector">
-    <span class="selector-desc" :class="{'checked': allChecked}">{{selectedWallpapers.length}}/{{currentList.length}}</span>
+    <span class="selector-desc" :class="{'checked': allChecked}">{{selectedWallpapers.length}}/{{onshowWallpapers.length}}</span>
     <div class="selector-checkbox" :class="{'checked': allChecked}" @click="selectAll">
       <i v-show="allChecked" class="el-icon-check selector-checkbox-center"></i>
     </div>
@@ -17,17 +17,17 @@ export default {
     }
   },
   computed: {
-    ...mapState(['selectedWallpapers', 'currentList']),
+    ...mapState(['selectedWallpapers', 'onshowWallpapers']),
     allChecked () {
-      return this.currentList.length && this.selectedWallpapers.length === this.currentList.length
+      return this.onshowWallpapers.length && this.selectedWallpapers.length === this.onshowWallpapers.length
     }
   },
   methods: {
     selectAll () {
       if (!this.allChecked) {
-        this.$store.commit('SELECT_ALL')
+        this.$store.commit('SELECT_ALL_ON_SHOW_WALLPAPERS')
       } else {
-        this.$store.commit('DELETE_ALL')
+        this.$store.commit('DELETE_ALL_SELECTED_ON_SHOW_WALLPAPERS')
       }
     }
   }

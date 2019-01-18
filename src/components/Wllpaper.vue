@@ -28,9 +28,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(['selectedWallpapers']),
+    ...mapState(['preloadWallpapers']),
     checked () {
-      return new Set(this.selectedWallpapers).has(this.wallpaper.downloadUrl)
+      return new Set(this.preloadWallpapers).has(this.wallpaper.downloadUrl)
     }
   },
   methods: {
@@ -65,9 +65,8 @@ export default {
   &-title {
     margin: 0;
     position: absolute;
-    bottom: -8px;
-    padding: 15px;
-    padding-top: 8px;
+    bottom: 0;
+    padding: 2%;
     color: #909399;
     font-weight: normal;
     overflow: hidden;

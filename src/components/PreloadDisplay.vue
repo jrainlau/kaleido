@@ -1,29 +1,25 @@
 <template>
   <div class="display">
-    <Pagination />
     <el-row :gutter="15">
-      <template v-for="(wallpaper, index) in onshowWallpapers">
-        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" :key="index">
+      <template v-for="(wallpaper, index) in allPreloadWallpapers">
+        <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6" :key="index">
           <Wallpaper :wallpaper="wallpaper" />
         </el-col>
       </template>
     </el-row>
-    <Pagination />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import Wallpaper from './Wllpaper'
-import Pagination from './Pagination'
 
 export default {
   components: {
-    Wallpaper,
-    Pagination
+    Wallpaper
   },
   computed: {
-    ...mapState(['onshowWallpapers'])
+    ...mapGetters(['allPreloadWallpapers'])
   }
 }
 </script>

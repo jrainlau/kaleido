@@ -3,7 +3,7 @@
     <el-pagination
       background
       layout="prev, pager, next"
-      :total="currentList[0] && Number(currentList[0].total)"
+      :total="onshowWallpapers[0] && Number(onshowWallpapers[0].total)"
       :current-page="currentPage"
       @current-change="currentChange"
       @prev-click="stepClick"
@@ -16,14 +16,13 @@
 import { mapState } from 'vuex'
 
 export default {
-  props: ['total'],
   data () {
     return {
       currentPage: 1
     }
   },
   computed: {
-    ...mapState(['currentPageAmount', 'currentWebviewSrc', 'currentList'])
+    ...mapState(['currentPageAmount', 'currentWebviewSrc', 'onshowWallpapers'])
   },
   methods: {
     currentChange (num) {
@@ -37,7 +36,7 @@ export default {
     currentPage (val) {
       const newSrc = this.currentWebviewSrc.replace(/page\/\d+/g, `page/${this.currentPage}`)
       this.$store.commit('UPDATE_WEBVIEW_SRC', newSrc)
-      this.$store.commit('DELETE_ALL')
+      this.$store.commit('RESET_SELECTED_ON_SHOW_WALLPAPERS')
     },
     currentWebviewSrc (val) {
       this.currentPage = val.split('page/')[1] ? Number(val.split('page/')[1]) : 1

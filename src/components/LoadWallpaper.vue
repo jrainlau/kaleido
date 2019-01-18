@@ -31,10 +31,13 @@ export default {
     const webview = this.$refs['webview']
     webview.addEventListener('load-commit', () => {
       this.showProgress = true
+      if (this.progress < 70) {
+        this.progress += random(10, 30)
+      }
       console.log(`Start loading ${this.webviewSrc}...`)
     })
     webview.addEventListener('did-start-loading', () => {
-      this.progress = random(5, 30)
+      this.progress = 0
     })
     webview.addEventListener('did-finish-load', () => {
       this.progress = 100
@@ -50,8 +53,8 @@ export default {
         var pageAmount = paginations[paginations.length - 2].text
         var screenResolution = document.querySelector('#header > div.screen-res > span:nth-child(4) > strong').textContent.replace(/\\s+/g, '')
         var wallpaperNodeList = document.querySelectorAll('.wallpapers')
-        var currentList = wallpaperNodeList[wallpaperNodeList.length - 1]
-        var wallpapers = Array.from(currentList.querySelectorAll('img')).map(img => {
+        var onshowWallpapers = wallpaperNodeList[wallpaperNodeList.length - 1]
+        var wallpapers = Array.from(onshowWallpapers.querySelectorAll('img')).map(img => {
           var imgName = img.src.replace(/http:\\/\\/hd\\.wallpaperswide\\.com\\/thumbs\\/|\\-t1\\.jpg/g, '')
           return {
             thumb: img.src,

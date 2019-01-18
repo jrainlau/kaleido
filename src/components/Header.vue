@@ -1,11 +1,16 @@
 <template>
   <div class="header">
-    <h1 class="header-logo">Kaleido</h1>
+    <h1 class="header-logo" @click="toMain">Kaleido</h1>
     <div class="header-tools">
-      <el-button :disabled="!selectedWallpapers.length" size="mini" type="primary" round @click="download">
+      <el-button :disabled="!preloadWallpapers.length" size="mini" type="primary" round @click="download">
         Download
       </el-button>
-      <Selector name="All" />
+      <el-badge class="header-tools-selected" :hidden="!preloadWallpapers.length" :value="preloadWallpapers.length">
+        <el-button :disabled="!preloadWallpapers.length" size="mini" type="plain" round @click="toPreload">
+          Selected
+        </el-button>
+      </el-badge>
+      <Selector v-if="$route.path === '/'" name="All" />
     </div>
   </div>
 </template>
@@ -21,7 +26,7 @@ export default {
     Selector
   },
   computed: {
-    ...mapState(['selectedWallpapers'])
+    ...mapState(['preloadWallpapers'])
   },
   methods: {
     download () {
@@ -30,7 +35,7 @@ export default {
       }, (dirPath) => {
         if (!dirPath) return
         const res = ipcRenderer.sendSync('start-download', {
-          wallpapers: this.selectedWallpapers,
+          wallpapers: this.preloadWallpapers,
           dirPath
         })
         if (res) {
@@ -40,6 +45,13 @@ export default {
           })
         }
       })
+    },
+    toPreload () {
+      this.$router.push('/preload')
+    },
+    toMain () {
+      this.$router.push('/')
+      this.$store.commit('UPDATE_WEBVIEW_SRC', 'http://wallpaperswide.com/page/1')
     }
   }
 }
@@ -69,6 +81,9 @@ export default {
     display: flex;
     align-items: center;
     flex-direction: row-reverse;
+    &-selected {
+      margin-right: 15px;
+    }
   }
 }
 </style>
