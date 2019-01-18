@@ -1,6 +1,6 @@
 <template>
   <div class="selector">
-    <span class="selector-desc" :class="{'checked': allChecked}">{{selectedWallpapers.length}}/{{onshowWallpapers.length}}</span>
+    <span class="selector-desc" :class="{'checked': allChecked}">{{onShowSelectedWallpapers.length}}/{{onShowWallpapers.length}}</span>
     <div class="selector-checkbox" :class="{'checked': allChecked}" @click="selectAll">
       <i v-show="allChecked" class="el-icon-check selector-checkbox-center"></i>
     </div>
@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -17,9 +17,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['selectedWallpapers', 'onshowWallpapers']),
+    ...mapState(['onShowWallpapers']),
+    ...mapGetters(['onShowSelectedWallpapers']),
     allChecked () {
-      return this.onshowWallpapers.length && this.selectedWallpapers.length === this.onshowWallpapers.length
+      return this.onShowWallpapers.length && this.onShowSelectedWallpapers.length === this.onShowWallpapers.length
     }
   },
   methods: {

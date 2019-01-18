@@ -5,10 +5,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    onloadCategories: {},
-    onshowWallpapers: [],
-    onloadWallpapers: [],
-    onloadUrls: new Set(),
+    loadedCategories: {},
+    onShowWallpapers: [],
+    loadedWallpapers: [],
+    loadedUrls: new Set(),
     currentPageAmount: 0,
     currentWebviewSrc: 'http://wallpaperswide.com/page/1',
     webviewSrc: 'http://wallpaperswide.com/page/1',
@@ -17,15 +17,15 @@ export default new Vuex.Store({
   },
   mutations: {
     LOAD_CATEGORY (_state, { src, cate }) {
-      _state.onloadCategories[src] = cate
-      _state.onshowWallpapers = cate.wallpapers
-      _state.onloadWallpapers = _state.onloadWallpapers.concat(cate.wallpapers)
+      _state.loadedCategories[src] = cate
+      _state.onShowWallpapers = cate.wallpapers
+      _state.loadedWallpapers = _state.loadedWallpapers.concat(cate.wallpapers)
     },
     UPDATE_WEBVIEW_SRC (_state, src) {
-      if (!_state.onloadCategories[src]) {
+      if (!_state.loadedCategories[src]) {
         _state.webviewSrc = src
       } else {
-        _state.onshowWallpapers = _state.onloadCategories[src].wallpapers
+        _state.onShowWallpapers = _state.loadedCategories[src].wallpapers
       }
       _state.currentWebviewSrc = src
     },
@@ -43,8 +43,8 @@ export default new Vuex.Store({
       _state.preloadWallpapers = [...preloadSet]
     },
     SELECT_ALL_ON_SHOW_WALLPAPERS (_state) {
-      _state.selectedWallpapers = _state.onshowWallpapers.map(({ downloadUrl }) => downloadUrl)
-      _state.preloadWallpapers = _state.onshowWallpapers.map(({ downloadUrl }) => downloadUrl)
+      _state.selectedWallpapers = _state.onShowWallpapers.map(({ downloadUrl }) => downloadUrl)
+      _state.preloadWallpapers = _state.preloadWallpapers.concat(_state.selectedWallpapers)
     },
     DELETE_ALL_SELECTED_ON_SHOW_WALLPAPERS (_state) {
       const preloadSet = new Set(_state.preloadWallpapers)
@@ -59,12 +59,19 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    allOnloadWallpapers (_state) {
-      return [].concat(...Object.keys(_state.onloadCategories).map(key => _state.onloadCategories[key].wallpapers))
+    allloadedWallpapers (_state) {
+      return [].concat(...Object.keys(_state.loadedCategories).map(key => _state.loadedCategories[key].wallpapers))
     },
     allPreloadWallpapers (_state) {
-      const allOnloadWallpapers = [].concat(...Object.keys(_state.onloadCategories).map(key => _state.onloadCategories[key].wallpapers))
-      return allOnloadWallpapers.filter(({ downloadUrl }) => _state.preloadWallpapers.includes(downloadUrl))
+      const allloadedWallpapers = [].concat(...Object.keys(_state.loadedCategories).map(key => _state.loadedCategories[key].wallpapers))
+      return allloadedWallpapers.filter(({ downloadUrl }) => _state.preloadWallpapers.includes(downloadUrl))
+    },
+    onShowSelectedWallpapers (_state) {
+      const preloadWallpapers = _state.preloadWallpapers
+      const onShowWallpapers = _state.onShowWallpapers
+      return onShowWallpapers
+        .filter(({ downloadUrl }) => preloadWallpapers.includes(downloadUrl))
+        .map(({ downloadUrl }) => downloadUrl)
     }
   }
 })

@@ -53,8 +53,8 @@ export default {
         var pageAmount = paginations[paginations.length - 2].text
         var screenResolution = document.querySelector('#header > div.screen-res > span:nth-child(4) > strong').textContent.replace(/\\s+/g, '')
         var wallpaperNodeList = document.querySelectorAll('.wallpapers')
-        var onshowWallpapers = wallpaperNodeList[wallpaperNodeList.length - 1]
-        var wallpapers = Array.from(onshowWallpapers.querySelectorAll('img')).map(img => {
+        var onShowWallpapers = wallpaperNodeList[wallpaperNodeList.length - 1]
+        var wallpapers = Array.from(onShowWallpapers.querySelectorAll('img')).map(img => {
           var imgName = img.src.replace(/http:\\/\\/hd\\.wallpaperswide\\.com\\/thumbs\\/|\\-t1\\.jpg/g, '')
           return {
             thumb: img.src,

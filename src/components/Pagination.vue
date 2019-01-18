@@ -3,7 +3,7 @@
     <el-pagination
       background
       layout="prev, pager, next"
-      :total="onshowWallpapers[0] && Number(onshowWallpapers[0].total)"
+      :total="onShowWallpapers[0] && Number(onShowWallpapers[0].total)"
       :current-page="currentPage"
       @current-change="currentChange"
       @prev-click="stepClick"
@@ -22,7 +22,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentPageAmount', 'currentWebviewSrc', 'onshowWallpapers'])
+    ...mapState(['currentPageAmount', 'currentWebviewSrc', 'onShowWallpapers'])
   },
   methods: {
     currentChange (num) {

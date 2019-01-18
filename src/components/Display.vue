@@ -2,7 +2,7 @@
   <div class="display">
     <Pagination />
     <el-row :gutter="15">
-      <template v-for="(wallpaper, index) in onshowWallpapers">
+      <template v-for="(wallpaper, index) in onShowWallpapers">
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" :key="index">
           <Wallpaper :wallpaper="wallpaper" />
         </el-col>
@@ -23,7 +23,7 @@ export default {
     Pagination
   },
   computed: {
-    ...mapState(['onshowWallpapers'])
+    ...mapState(['onShowWallpapers'])
   }
 }
 </script>
