@@ -1,10 +1,14 @@
 const { app, BrowserWindow, ipcMain, Menu } = require('electron')
-const download = require('download')
+const { download } = require('electron-dl')
 
 ipcMain.on('start-download', (event, { wallpapers, dirPath }) => {
   console.log(wallpapers, dirPath)
   Promise
-    .all(wallpapers.map(x => download(x, dirPath)))
+    .all(wallpapers.map(x => download(BrowserWindow.getFocusedWindow(), x, {
+      saveAs: false,
+      directory: dirPath,
+      openFolderWhenDone: true
+    })))
     .then(() => {
       event.returnValue = 'Download completed!'
     })

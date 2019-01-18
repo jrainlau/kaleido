@@ -46,11 +46,9 @@ export default {
         })
         if (res) {
           this.$store.commit('CLEAR_PRELOAD_WALLPAPERS')
-          dialog.showMessageBox({
-            title: 'Success!',
-            message: res,
-            detail: `All the wallpapers have been saved in path \n"${dirPath}"`,
-            buttons: ['OK']
+          this.$message({
+            message: 'Download completed!',
+            type: 'success'
           })
           this.$store.commit('SET_LOADING', false)
           this.$router.push('/')
