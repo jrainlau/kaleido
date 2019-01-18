@@ -1,7 +1,12 @@
 <template>
   <div class="header">
-    <h1 class="header-logo" @click="toMain">Kaleido</h1>
+    <div class="header-logo" @click="toMain">
+      <img :src="require('@/assets/imgs/logo.png')" alt="">
+    </div>
     <div class="header-tools">
+      <a class="header-github" href="javascript:void(0)" title="Github" @click="toGithub">
+        <img :src="require('@/assets/imgs/github.png')" alt="">
+      </a>
       <el-button :disabled="!preloadWallpapers.length" size="mini" type="primary" round @click="download">
         Download
       </el-button>
@@ -19,7 +24,7 @@
 import Selector from './Selector'
 import { mapState } from 'vuex'
 const { dialog } = window.require('electron').remote
-const { ipcRenderer } = window.require('electron')
+const { ipcRenderer, shell } = window.require('electron')
 
 export default {
   components: {
@@ -58,6 +63,9 @@ export default {
     toMain () {
       this.$router.push('/')
       this.$store.commit('UPDATE_WEBVIEW_SRC', 'http://wallpaperswide.com/page/1')
+    },
+    toGithub () {
+      shell.openExternal('https://github.com/jrainlau/kaleido')
     }
   }
 }
@@ -77,9 +85,12 @@ export default {
     width: 240px;
     margin: 0;
     height: 60px;
-    line-height: 60px;
-    text-align: center;
-    box-sizing: border-box;
+    cursor: pointer;
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
   }
   &-tools {
     padding: 0 10px;
@@ -89,6 +100,15 @@ export default {
     flex-direction: row-reverse;
     &-selected {
       margin-right: 15px;
+    }
+  }
+  &-github {
+    width: 25px;
+    height: 25px;
+    margin-left: 15px;
+    img {
+      max-width: 100%;
+      max-height: 100%;
     }
   }
 }

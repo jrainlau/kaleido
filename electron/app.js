@@ -1,7 +1,4 @@
-const electron = require('electron')
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
-const ipcMain = require('electron').ipcMain
+const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const download = require('download')
 
 ipcMain.on('start-download', (event, { wallpapers, dirPath }) => {
@@ -13,15 +10,27 @@ ipcMain.on('start-download', (event, { wallpapers, dirPath }) => {
     })
 })
 
-let url
-if (process.env.NODE_ENV === 'DEV') {
-  url = 'http://localhost:8080/'
-} else {
-  url = `file://${process.cwd()}/dist/index.html`
+function createWindow () {
+  Menu.setApplicationMenu(null)
+
+  const window = new BrowserWindow({
+    width: 1152,
+    height: 720,
+    webPreferences: process.env.NODE_ENV === 'DEV' ? {} : {
+      devTools: false
+    }
+  })
+
+  window.setResizable(false)
+  if (process.env.NODE_ENV === 'DEV') {
+    window.loadURL('http://localhost:8080/')
+    window.webContents.openDevTools()
+  } else {
+    window.loadFile('index.html')
+  }
 }
 
-app.on('ready', () => {
-  let window = new BrowserWindow({ width: 1200, height: 800 })
-  window.webContents.openDevTools()
-  window.loadURL(url)
+app.on('ready', createWindow)
+app.on('window-all-closed', () => {
+  app.quit()
 })
