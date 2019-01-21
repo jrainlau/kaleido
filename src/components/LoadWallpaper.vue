@@ -5,7 +5,7 @@
       v-show="showProgress"
       :percentage="progress"
       :show-text="false"></el-progress>
-    <webview id="webview" ref="webview" :src="webviewSrc" style="display:none;" nodeintegration disablewebsecurity></webview>
+    <webview v-if="initWebview" id="webview" ref="webview" :src="webviewSrc" style="display:none;" nodeintegration disablewebsecurity></webview>
   </div>
 </template>
 
@@ -21,63 +21,81 @@ export default {
   data () {
     return {
       progress: 0,
-      showProgress: false
+      showProgress: false,
+      initWebview: false
     }
   },
   computed: {
     ...mapState(['webviewSrc'])
   },
-  mounted () {
-    const webview = this.$refs['webview']
-    webview.addEventListener('load-commit', () => {
-      this.showProgress = true
-      if (this.progress < 70) {
-        this.progress += random(10, 30)
+  watch: {
+    webviewSrc (val) {
+      if (!this.initWebview) {
+        this.initWebview = true
+        this.$nextTick(this.loadWebview)
       }
-      console.log(`Start loading ${this.webviewSrc}...`)
-    })
-    webview.addEventListener('did-start-loading', () => {
-      this.progress = 0
-      this.$store.commit('SET_LOADING', true)
-    })
-    webview.addEventListener('did-finish-load', () => {
-      this.progress = 100
-      console.log('Loading finished!')
-      setTimeout(() => {
-        this.showProgress = false
-        this.$store.commit('SET_LOADING', false)
-      }, 1000)
-    })
-    webview.addEventListener('dom-ready', () => {
-      webview.getWebContents().executeJavaScript(`
-        var paginationArr = document.querySelectorAll('.pagination')
-        var paginations = paginationArr[paginationArr.length -1].children
-        var pageAmount = paginations[paginations.length - 2].text
-        var screenResolution = document.querySelector('#header > div.screen-res > span:nth-child(4) > strong').textContent.replace(/\\s+/g, '')
-        var wallpaperNodeList = document.querySelectorAll('.wallpapers')
-        var onShowWallpapers = wallpaperNodeList[wallpaperNodeList.length - 1]
-        var wallpapers = Array.from(onShowWallpapers.querySelectorAll('img')).map(img => {
-          var imgName = img.src.replace(/http:\\/\\/hd\\.wallpaperswide\\.com\\/thumbs\\/|\\-t1\\.jpg/g, '')
-          return {
-            thumb: img.src,
-            name: imgName,
-            downloadUrl: 'http://wallpaperswide.com/download/' + imgName + '-wallpaper-' + screenResolution + '.jpg',
-            total: pageAmount
-          }
-        })
+    }
+  },
+  async mounted () {
+    const loadedCategories = await this.$store.dispatch('initCache')
+    if (!Object.keys(loadedCategories).length) {
+      this.initWebview = true
+      this.$nextTick(this.loadWebview)
+    }
+  },
+  methods: {
+    loadWebview () {
+      const webview = this.$refs['webview']
+      webview.addEventListener('load-commit', () => {
+        this.showProgress = true
+        if (this.progress < 70) {
+          this.progress += random(10, 30)
+        }
+        console.log(`Start loading ${this.webviewSrc}...`)
+      })
+      webview.addEventListener('did-start-loading', () => {
+        this.progress = 0
+        this.$store.commit('SET_LOADING', true)
+      })
+      webview.addEventListener('did-finish-load', () => {
+        this.progress = 100
+        console.log('Loading finished!')
+        setTimeout(() => {
+          this.showProgress = false
+          this.$store.commit('SET_LOADING', false)
+        }, 1000)
+      })
+      webview.addEventListener('dom-ready', () => {
+        webview.getWebContents().executeJavaScript(`
+          var paginationArr = document.querySelectorAll('.pagination')
+          var paginations = paginationArr[paginationArr.length -1].children
+          var pageAmount = paginations[paginations.length - 2].text
+          var screenResolution = document.querySelector('#header > div.screen-res > span:nth-child(4) > strong').textContent.replace(/\\s+/g, '')
+          var wallpaperNodeList = document.querySelectorAll('.wallpapers')
+          var onShowWallpapers = wallpaperNodeList[wallpaperNodeList.length - 1]
+          var wallpapers = Array.from(onShowWallpapers.querySelectorAll('img')).map(img => {
+            var imgName = img.src.replace(/http:\\/\\/hd\\.wallpaperswide\\.com\\/thumbs\\/|\\-t1\\.jpg/g, '')
+            return {
+              thumb: img.src,
+              name: imgName,
+              downloadUrl: 'http://wallpaperswide.com/download/' + imgName + '-wallpaper-' + screenResolution + '.jpg',
+              total: pageAmount
+            }
+          })
 
-        ;(() => {
-          return {
-            wallpapers: wallpapers
-          }
-        })()
-      `, false, (res) => {
-        this.$store.commit('LOAD_CATEGORY', {
-          src: this.webviewSrc,
-          cate: res
+          ;(() => {
+            return {
+              wallpapers: wallpapers
+            }
+          })()
+        `, false, (res) => {
+          this.$store.dispatch('locadCache', {
+            src: this.webviewSrc,
+            cate: res
+          })
         })
       })
-    })
+    }
   }
 }
 </script>

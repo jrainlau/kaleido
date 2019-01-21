@@ -4,7 +4,7 @@
       <img :src="require('@/assets/imgs/logo.png')" alt="">
     </div>
     <div class="header-tools">
-      <a class="header-github" href="javascript:void(0)" title="Github" @click="toGithub">
+      <a class="header-tools-github" href="javascript:void(0)" title="Github" @click="toGithub">
         <img :src="require('@/assets/imgs/github.png')" alt="">
       </a>
       <el-button :disabled="!preloadWallpapers.length" size="mini" type="primary" round @click="download">
@@ -16,6 +16,7 @@
         </el-button>
       </el-badge>
       <Selector v-if="$route.path === '/'" name="All" />
+      <i title="refresh" class="header-tools-refresh el-icon-refresh" @click="refresh"></i>
     </div>
   </div>
 </template>
@@ -64,6 +65,22 @@ export default {
     },
     toGithub () {
       shell.openExternal('https://github.com/jrainlau/kaleido')
+    },
+    refresh () {
+      this.$confirm('Kaleido caches the visited data in order to speedup your next visitation, but this operation will clear all the cache. Are you sure to go on?', 'Warning', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        type: 'warning'
+      }).then(async () => {
+        await this.$store.dispatch('clearCache')
+        this.$message({
+          type: 'success',
+          message: 'Reloading page...'
+        })
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
+      }).catch(() => {})
     }
   }
 }
@@ -99,14 +116,18 @@ export default {
     &-selected {
       margin-right: 15px;
     }
-  }
-  &-github {
-    width: 25px;
-    height: 25px;
-    margin-left: 15px;
-    img {
-      max-width: 100%;
-      max-height: 100%;
+    &-github {
+      width: 25px;
+      height: 25px;
+      margin-left: 15px;
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+    &-refresh {
+      color: #DCDFE6;
+      font-size: 20px;
     }
   }
 }
