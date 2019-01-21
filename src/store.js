@@ -41,7 +41,6 @@ export default new Vuex.Store({
     currentPageAmount: 0,
     currentWebviewSrc: BASE_URL,
     webviewSrc: BASE_URL,
-    selectedWallpapers: [],
     preloadWallpapers: [],
     loading: false
   },
@@ -70,32 +69,12 @@ export default new Vuex.Store({
       _state.currentWebviewSrc = src
     },
     ADD_TO_SELECTED (_state, url) {
-      _state.selectedWallpapers.push(url)
       _state.preloadWallpapers.push(url)
     },
     DELETE_FROM_SELECTED (_state, url) {
-      const selectedSet = new Set(_state.selectedWallpapers)
-      selectedSet.delete(url)
-      _state.selectedWallpapers = [...selectedSet]
-
       const preloadSet = new Set(_state.preloadWallpapers)
       preloadSet.delete(url)
       _state.preloadWallpapers = [...preloadSet]
-    },
-    SELECT_ALL_ON_SHOW_WALLPAPERS (_state) {
-      _state.selectedWallpapers = _state.onShowWallpapers.map(({ downloadUrl }) => downloadUrl)
-      _state.preloadWallpapers = _state.preloadWallpapers.concat(_state.selectedWallpapers)
-    },
-    DELETE_ALL_SELECTED_ON_SHOW_WALLPAPERS (_state) {
-      const preloadSet = new Set(_state.preloadWallpapers)
-      _state.selectedWallpapers.forEach(url => {
-        preloadSet.delete(url)
-      })
-      _state.selectedWallpapers = []
-      _state.preloadWallpapers = [...preloadSet]
-    },
-    RESET_SELECTED_ON_SHOW_WALLPAPERS (_state) {
-      _state.selectedWallpapers = []
     },
     CLEAR_PRELOAD_WALLPAPERS (_state) {
       _state.preloadWallpapers = []
@@ -116,19 +95,9 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    allloadedWallpapers (_state) {
-      return [].concat(...Object.keys(_state.loadedCategories).map(key => _state.loadedCategories[key].wallpapers))
-    },
     allPreloadWallpapers (_state) {
       const allloadedWallpapers = [].concat(...Object.keys(_state.loadedCategories).map(key => _state.loadedCategories[key].wallpapers))
       return allloadedWallpapers.filter(({ downloadUrl }) => _state.preloadWallpapers.includes(downloadUrl))
-    },
-    onShowSelectedWallpapers (_state) {
-      const preloadWallpapers = _state.preloadWallpapers
-      const onShowWallpapers = _state.onShowWallpapers
-      return onShowWallpapers
-        .filter(({ downloadUrl }) => preloadWallpapers.includes(downloadUrl))
-        .map(({ downloadUrl }) => downloadUrl)
     }
   }
 })

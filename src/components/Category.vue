@@ -49,7 +49,6 @@ export default {
       console.log(cateName)
       const newSrc = `${BASE_DOMAIN}/${cateName}-desktop-wallpapers/page/1`
       this.$store.commit('UPDATE_WEBVIEW_SRC', newSrc)
-      this.$store.commit('RESET_SELECTED_ON_SHOW_WALLPAPERS')
     },
     filterNode (value, data) {
       if (!value) return true

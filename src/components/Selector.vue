@@ -17,7 +17,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['onShowWallpapers']),
+    ...mapState(['onShowWallpapers', 'preloadWallpapers']),
     ...mapGetters(['onShowSelectedWallpapers']),
     allChecked () {
       return this.onShowWallpapers.length && this.onShowSelectedWallpapers.length === this.onShowWallpapers.length

@@ -36,7 +36,6 @@ export default {
     currentPage (val) {
       const newSrc = this.currentWebviewSrc.replace(/page\/\d+/g, `page/${this.currentPage}`)
       this.$store.commit('UPDATE_WEBVIEW_SRC', newSrc)
-      this.$store.commit('RESET_SELECTED_ON_SHOW_WALLPAPERS')
     },
     currentWebviewSrc (val) {
       this.currentPage = val.split('page/')[1] ? Number(val.split('page/')[1]) : 1

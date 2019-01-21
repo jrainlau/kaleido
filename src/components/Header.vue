@@ -15,22 +15,18 @@
           Selected
         </el-button>
       </el-badge>
-      <Selector v-if="$route.path === '/'" name="All" />
-      <i title="refresh" class="header-tools-refresh el-icon-refresh" @click="refresh"></i>
+      <i v-if="$route.path === '/'" title="refresh" class="header-tools-refresh el-icon-refresh" @click="refresh"></i>
+      <i v-if="$route.path !== '/'" title="delete all" class="header-tools-delete el-icon-delete" @click="deleteAll"></i>
     </div>
   </div>
 </template>
 
 <script>
-import Selector from './Selector'
 import { mapState } from 'vuex'
 const { dialog } = window.require('electron').remote
 const { ipcRenderer, shell } = window.require('electron')
 
 export default {
-  components: {
-    Selector
-  },
   computed: {
     ...mapState(['preloadWallpapers'])
   },
@@ -81,6 +77,17 @@ export default {
           location.reload()
         }, 2000)
       }).catch(() => {})
+    },
+    deleteAll () {
+      this.$confirm('Delete all selected wallpaper?', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then(() => {
+        this.$store.commit('CLEAR_PRELOAD_WALLPAPERS')
+        setTimeout(() => {
+          this.$router.push('/')
+        }, 1000)
+      }).catch(() => {})
     }
   }
 }
@@ -114,7 +121,7 @@ export default {
     align-items: center;
     flex-direction: row-reverse;
     &-selected {
-      margin-right: 15px;
+      margin: 0 5px;
     }
     &-github {
       width: 25px;
@@ -126,7 +133,11 @@ export default {
       }
     }
     &-refresh {
-      color: #DCDFE6;
+      color: #606266;
+      font-size: 20px;
+    }
+    &-delete {
+      color: #606266;
       font-size: 20px;
     }
   }
