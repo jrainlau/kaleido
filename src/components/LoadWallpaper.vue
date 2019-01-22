@@ -27,7 +27,7 @@ export default {
       progress: 0,
       showProgress: false,
       initWebview: false,
-      preloadSrc: '',
+      preloadSrc: 'http://wallpaperswide.com/page/2',
       preloadQueue: []
     }
   },
@@ -56,6 +56,9 @@ export default {
     if (!Object.keys(loadedCategories).length) {
       this.initWebview = true
       this.$nextTick(this.loadWebview)
+    }
+    if (!loadedCategories[this.preloadSrc]) {
+      this.$nextTick(this.preloadWebview)
     }
   },
   methods: {
