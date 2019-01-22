@@ -42,15 +42,20 @@ export default new Vuex.Store({
     currentWebviewSrc: BASE_URL,
     webviewSrc: BASE_URL,
     preloadWallpapers: [],
-    loading: false
+    loading: false,
+    pageTotal: 0
   },
   mutations: {
     INIT_CATEGORY (_state, categories) {
       _state.loadedCategories = categories
       if (categories[BASE_URL]) {
         _state.onShowWallpapers = categories[BASE_URL].wallpapers
+        _state.pageTotal = Number(categories[BASE_URL].wallpapers[0].total)
         _state.loadedWallpapers = _state.loadedWallpapers.concat(_state.onShowWallpapers)
       }
+    },
+    UPDATE_PAGE_TOTAL (_state, total) {
+      _state.pageTotal = total
     },
     SET_LOADING (_state, val) {
       _state.loading = val
@@ -78,6 +83,10 @@ export default new Vuex.Store({
     },
     CLEAR_PRELOAD_WALLPAPERS (_state) {
       _state.preloadWallpapers = []
+    },
+    PRELOAD (_state, { src, cate }) {
+      _state.loadedCategories[src] = cate
+      _state.loadedWallpapers = _state.loadedWallpapers.concat(cate.wallpapers)
     }
   },
   actions: {
@@ -86,9 +95,12 @@ export default new Vuex.Store({
       commit('INIT_CATEGORY', loadedCategories)
       return loadedCategories
     },
-    async locadCache ({ commit }, { src, cate }) {
+    async loadCategory ({ commit }, { src, cate }) {
       await updateCache(src, cate)
       commit('LOAD_CATEGORY', { src, cate })
+      if (cate.wallpapers[0].total) {
+        commit('UPDATE_PAGE_TOTAL', Number(cate.wallpapers[0].total))
+      }
     },
     async clearCache () {
       await DB.remove({}, { multi: true })

@@ -5,12 +5,16 @@
       v-show="showProgress"
       :percentage="progress"
       :show-text="false"></el-progress>
-    <webview v-if="initWebview" id="webview" ref="webview" :src="webviewSrc" style="display:none;" nodeintegration disablewebsecurity></webview>
+    <webview v-if="initWebview" ref="webview" :src="webviewSrc" style="display:none;" nodeintegration disablewebsecurity></webview>
+    <webview ref="preload" :src="preloadSrc" style="display:none;" nodeintegration disablewebsecurity></webview>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import inject from '@/assets/inject.js'
+
+let preloadLock = false
 
 function random (n, m) {
   var c = m - n + 1
@@ -22,11 +26,13 @@ export default {
     return {
       progress: 0,
       showProgress: false,
-      initWebview: false
+      initWebview: false,
+      preloadSrc: '',
+      preloadQueue: []
     }
   },
   computed: {
-    ...mapState(['webviewSrc'])
+    ...mapState(['webviewSrc', 'currentWebviewSrc', 'loadedCategories', 'onShowWallpapers'])
   },
   watch: {
     webviewSrc (val) {
@@ -34,6 +40,15 @@ export default {
         this.initWebview = true
         this.$nextTick(this.loadWebview)
       }
+    },
+    currentWebviewSrc (val) {
+      const pageCountArr = val.match(/\d+/g)
+      const pageCount = pageCountArr[pageCountArr.length - 1]
+      const preloadSrc = val.replace(/page\/\d+/g, `page/${Number(pageCount) + 1}`)
+      if (!this.loadedCategories[preloadSrc] && Number(pageCount) <= Number(this.onShowWallpapers[0].total)) {
+        this.preloadQueue.push(preloadSrc)
+      }
+      this.$nextTick(this.preloadWebview)
     }
   },
   async mounted () {
@@ -66,35 +81,34 @@ export default {
         }, 1000)
       })
       webview.addEventListener('dom-ready', () => {
-        webview.getWebContents().executeJavaScript(`
-          var paginationArr = document.querySelectorAll('.pagination')
-          var paginations = paginationArr[paginationArr.length -1].children
-          var pageAmount = paginations[paginations.length - 2].text
-          var screenResolution = document.querySelector('#header > div.screen-res > span:nth-child(4) > strong').textContent.replace(/\\s+/g, '')
-          var wallpaperNodeList = document.querySelectorAll('.wallpapers')
-          var onShowWallpapers = wallpaperNodeList[wallpaperNodeList.length - 1]
-          var wallpapers = Array.from(onShowWallpapers.querySelectorAll('img')).map(img => {
-            var imgName = img.src.replace(/http:\\/\\/hd\\.wallpaperswide\\.com\\/thumbs\\/|\\-t1\\.jpg/g, '')
-            return {
-              thumb: img.src,
-              name: imgName,
-              downloadUrl: 'http://wallpaperswide.com/download/' + imgName + '-wallpaper-' + screenResolution + '.jpg',
-              total: pageAmount
-            }
-          })
-
-          ;(() => {
-            return {
-              wallpapers: wallpapers
-            }
-          })()
-        `, false, (res) => {
-          this.$store.dispatch('locadCache', {
+        webview.getWebContents().executeJavaScript(inject, false, (res) => {
+          this.$store.dispatch('loadCategory', {
             src: this.webviewSrc,
             cate: res
           })
         })
       })
+    },
+    preloadWebview () {
+      if (this.preloadQueue.length > 0 && !preloadLock) {
+        preloadLock = true
+        this.preloadSrc = this.preloadQueue.shift()
+        const webview = this.$refs['preload']
+        webview.addEventListener('load-commit', () => {
+          console.log(`Preloading ${this.preloadSrc}...`)
+        })
+        webview.addEventListener('dom-ready', () => {
+          webview.getWebContents().executeJavaScript(inject, false, (res) => {
+            console.log('Preload finished!')
+            preloadLock = false
+            this.$store.commit('PRELOAD', {
+              src: this.preloadSrc,
+              cate: res
+            })
+            this.$nextTick(this.preloadWebview)
+          })
+        })
+      }
     }
   }
 }
