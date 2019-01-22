@@ -1,7 +1,7 @@
 import Datastore from 'nedb'
 
 const db = new Datastore({
-  filename: './.data/loadedCategory.db',
+  filename: 'loadedCategory.db',
   autoload: true
 })
 
