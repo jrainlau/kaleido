@@ -30,6 +30,11 @@ export default {
   computed: {
     ...mapState(['preloadWallpapers'])
   },
+  mounted () {
+    ipcRenderer.on('console', (event, arg) => {
+      console.log(arg)
+    })
+  },
   methods: {
     download () {
       this.$store.commit('SET_LOADING', true)
