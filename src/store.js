@@ -37,9 +37,7 @@ export default new Vuex.Store({
     loadedCategories: {},
     onShowWallpapers: [],
     loadedWallpapers: [],
-    loadedUrls: new Set(),
-    currentPageAmount: 0,
-    currentWebviewSrc: BASE_URL,
+    currentPageSrc: BASE_URL,
     webviewSrc: BASE_URL,
     preloadWallpapers: [],
     loading: false,
@@ -71,7 +69,7 @@ export default new Vuex.Store({
       } else {
         _state.onShowWallpapers = _state.loadedCategories[src].wallpapers
       }
-      _state.currentWebviewSrc = src
+      _state.currentPageSrc = src
     },
     ADD_TO_SELECTED (_state, url) {
       _state.preloadWallpapers.push(url)

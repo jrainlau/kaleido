@@ -32,7 +32,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['webviewSrc', 'currentWebviewSrc', 'loadedCategories', 'onShowWallpapers'])
+    ...mapState(['webviewSrc', 'currentPageSrc', 'loadedCategories', 'onShowWallpapers'])
   },
   watch: {
     webviewSrc (val) {
@@ -41,7 +41,7 @@ export default {
         this.$nextTick(this.loadWebview)
       }
     },
-    currentWebviewSrc (val) {
+    currentPageSrc (val) {
       const pageCountArr = val.match(/\d+/g)
       const pageCount = pageCountArr[pageCountArr.length - 1]
       const preloadSrc = val.replace(/page\/\d+/g, `page/${Number(pageCount) + 1}`)

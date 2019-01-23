@@ -22,7 +22,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentPageAmount', 'currentWebviewSrc', 'pageTotal'])
+    ...mapState(['currentPageSrc', 'pageTotal'])
   },
   methods: {
     currentChange (num) {
@@ -34,10 +34,10 @@ export default {
   },
   watch: {
     currentPage (val) {
-      const newSrc = this.currentWebviewSrc.replace(/page\/\d+/g, `page/${this.currentPage}`)
+      const newSrc = this.currentPageSrc.replace(/page\/\d+/g, `page/${this.currentPage}`)
       this.$store.commit('UPDATE_WEBVIEW_SRC', newSrc)
     },
-    currentWebviewSrc (val) {
+    currentPageSrc (val) {
       this.currentPage = val.split('page/')[1] ? Number(val.split('page/')[1]) : 1
     }
   }
