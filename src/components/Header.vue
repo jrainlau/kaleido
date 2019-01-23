@@ -17,6 +17,23 @@
       </el-badge>
       <i v-if="$route.path === '/'" title="refresh" class="header-tools-refresh el-icon-refresh" @click="refresh"></i>
       <i v-if="$route.path !== '/'" title="delete all" class="header-tools-delete el-icon-delete" @click="deleteAll"></i>
+
+      <el-badge class="header-tools-update" :is-dot="!versionMatch">
+        <el-tooltip :disabled="versionMatch" :content="`A new version of v ${latestVersion} is available, click to update.`" placement="bottom">
+          <span @click="updateVersion" :style="versionMatch ? `cursor: default;` : `cursor: pointer`">v {{currentVersion}}</span>
+        </el-tooltip>
+      </el-badge>
+
+      <el-popover
+        placement="bottom"
+        width="280"
+        trigger="manual"
+        v-model="showUpdatePanel">
+        <div class="header-tools-proccessing">
+          <p v-for="(msg, i) in updatingMsgs" :key="i">{{msg}}</p>
+          <el-button v-if="showRelaunchBtn" type="primary" icon="el-icon-check" size="mini" @click="relaunch">Relaunch</el-button>
+        </div>
+      </el-popover>
     </div>
   </div>
 </template>
@@ -27,13 +44,34 @@ const { dialog } = window.require('electron').remote
 const { ipcRenderer, shell } = window.require('electron')
 
 export default {
+  data () {
+    return {
+      versionMatch: true,
+      currentVersion: '',
+      latestVersion: '',
+      showUpdatePanel: false,
+      showRelaunchBtn: false,
+      updatingMsgs: []
+    }
+  },
   computed: {
     ...mapState(['preloadWallpapers'])
   },
   mounted () {
-    ipcRenderer.on('console', (event, arg) => {
-      console.log(arg)
+    ipcRenderer.on('updating', (event, args) => {
+      console.log(args)
+      this.updatingMsgs.push(args)
     })
+    ipcRenderer.on('update-result', (event, args) => {
+      console.log(args)
+      if (args.update === 'successed') {
+        this.showRelaunchBtn = true
+      }
+    })
+    const res = ipcRenderer.sendSync('check-update')
+    this.versionMatch = res.match
+    this.currentVersion = res.currentVersion
+    this.latestVersion = res.latestVersion
   },
   methods: {
     download () {
@@ -93,6 +131,18 @@ export default {
           this.$router.push('/')
         }, 1000)
       }).catch(() => {})
+    },
+    updateVersion () {
+      if (!this.versionMatch) {
+        this.showUpdatePanel = true
+        ipcRenderer.send('update-version')
+      }
+    },
+    relaunch () {
+      this.showUpdatePanel = false
+      this.showRelaunchBtn = false
+      this.updatingMsgs = []
+      ipcRenderer.send('relaunch')
     }
   }
 }
@@ -109,6 +159,7 @@ export default {
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   z-index: 100;
   &-logo {
+    position: relative;
     width: 240px;
     margin: 0;
     height: 60px;
@@ -144,6 +195,19 @@ export default {
     &-delete {
       color: #606266;
       font-size: 20px;
+    }
+    &-update {
+      margin: 0 15px;
+      outline: none;
+      span {
+        font-size: 12px;
+        color: #909399;
+      }
+    }
+    &-proccessing {
+      p {
+        font-style: italic;
+      }
     }
   }
 }
