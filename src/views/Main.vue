@@ -34,7 +34,8 @@ main {
   .content {
     flex: 1;
     height: 100%;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
   }
 }
 </style>

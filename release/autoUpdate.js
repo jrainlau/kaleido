@@ -10,7 +10,7 @@ const RELEASE_RENDER_MAIN_JS_CHUNK = 'js/chunk-vendors.js'
 const RELEASE_RENDER_MAIN_CSS = 'css/app.css'
 const RELEASE_RENDER_MAIN_CSS_CHUNK = 'css/chunk-vendors.css'
 
-function getReleaseFile (file, window) {
+function getReleaseFile (file) {
   const requestUrl = `${RELEASE_BASE}/${file}?r=${Math.random()}`
   return new Promise((resolve, reject) => {
     https.get(requestUrl, (res) => {
