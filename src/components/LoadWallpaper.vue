@@ -27,7 +27,7 @@ export default {
       progress: 0,
       showProgress: false,
       initWebview: false,
-      preloadSrc: 'http://wallpaperswide.com/page/2',
+      preloadSrc: '',
       preloadQueue: []
     }
   },
@@ -57,7 +57,9 @@ export default {
       this.initWebview = true
       this.$nextTick(this.loadWebview)
     }
-    if (!loadedCategories[this.preloadSrc]) {
+    const TEMP_PRELOAD_URL = 'http://wallpaperswide.com/page/2'
+    if (!loadedCategories[TEMP_PRELOAD_URL]) {
+      this.preloadQueue.push(TEMP_PRELOAD_URL)
       this.$nextTick(this.preloadWebview)
     }
   },
@@ -74,6 +76,16 @@ export default {
       webview.addEventListener('did-start-loading', () => {
         this.progress = 0
         this.$store.commit('SET_LOADING', true)
+      })
+      webview.addEventListener('did-fail-load', () => {
+        this.$msgbox({
+          title: 'Loading failed',
+          message: 'Please check out your network or restart the app.',
+          type: 'error',
+          confirmButtonText: 'Reload'
+        }).then(() => {
+          location.reload()
+        })
       })
       webview.addEventListener('did-finish-load', () => {
         this.progress = 100
@@ -100,11 +112,14 @@ export default {
         webview.addEventListener('load-commit', () => {
           console.log(`Preloading ${this.preloadSrc}...`)
         })
+        webview.addEventListener('did-fail-load', () => {
+          console.error('Preload failed')
+        })
         webview.addEventListener('dom-ready', () => {
           webview.getWebContents().executeJavaScript(inject, false, (res) => {
             console.log('Preload finished!')
             preloadLock = false
-            this.$store.commit('PRELOAD', {
+            this.$store.dispatch('preloadCate', {
               src: this.preloadSrc,
               cate: res
             })

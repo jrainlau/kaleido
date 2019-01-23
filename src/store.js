@@ -61,7 +61,7 @@ export default new Vuex.Store({
       _state.loading = val
     },
     LOAD_CATEGORY (_state, { src, cate }) {
-      _state.loadedCategories[src] = cate
+      Vue.set(_state.loadedCategories, src, cate)
       _state.onShowWallpapers = cate.wallpapers
       _state.loadedWallpapers = _state.loadedWallpapers.concat(cate.wallpapers)
     },
@@ -84,8 +84,8 @@ export default new Vuex.Store({
     CLEAR_PRELOAD_WALLPAPERS (_state) {
       _state.preloadWallpapers = []
     },
-    PRELOAD (_state, { src, cate }) {
-      _state.loadedCategories[src] = cate
+    PRELOAD_CATE (_state, { src, cate }) {
+      Vue.set(_state.loadedCategories, src, cate)
       _state.loadedWallpapers = _state.loadedWallpapers.concat(cate.wallpapers)
     }
   },
@@ -101,6 +101,10 @@ export default new Vuex.Store({
       if (cate.wallpapers[0].total) {
         commit('UPDATE_PAGE_TOTAL', Number(cate.wallpapers[0].total))
       }
+    },
+    async preloadCate ({ commit }, { src, cate }) {
+      await updateCache(src, cate)
+      commit('PRELOAD_CATE', { src, cate })
     },
     async clearCache () {
       await DB.remove({}, { multi: true })
