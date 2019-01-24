@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "electron": "NODE_ENV=DEV electron ./electron/app.js",
+    "electron:dev": "cross-env NODE_ENV=DEV electron ./electron/app.js",
+    "electron:build": "electron ./release/app.js",
     "build": "vue-cli-service build",
-    "package": "./package.sh",
-    "release": "standard-version",
-    "release:hot": "./package.hot.sh"
+    "pack": "./package.sh",
+    "release": "standard-version"
   },
   "author": "Jrain Lau",
   "main": "app.js",
@@ -27,6 +27,8 @@
     "@vue/cli-service": "^3.0.1",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "copy-webpack-plugin": "^4.6.0",
+    "cross-env": "^5.2.0",
     "electron": "4.0.1",
     "electron-devtools-installer": "2.2.4",
     "electron-packager": "13.0.1",

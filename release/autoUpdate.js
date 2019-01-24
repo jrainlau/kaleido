@@ -4,6 +4,7 @@ const { resolve } = require('path')
 
 const RELEASE_BASE = 'https://raw.githubusercontent.com/jrainlau/kaleido/master/release'
 const RELEASE_INFO = 'package.json'
+const RELEASE_UPDATOR = 'autoUpdate.js'
 const RELEASE_ELECTRON_MAIN = 'app.js'
 const RELEASE_RENDER_MAIN_JS = 'js/app.js'
 const RELEASE_RENDER_MAIN_JS_CHUNK = 'js/chunk-vendors.js'
@@ -48,6 +49,7 @@ async function autoUpdate (window) {
   if (!match) {
     [
       RELEASE_INFO,
+      RELEASE_UPDATOR,
       RELEASE_ELECTRON_MAIN,
       RELEASE_RENDER_MAIN_JS,
       RELEASE_RENDER_MAIN_JS_CHUNK,

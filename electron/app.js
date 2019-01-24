@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const { download } = require('electron-dl')
 const { versionDiff, autoUpdate } = require('./autoUpdate')
+const { resolve } = require('path')
 
 function ipcMessager (window) {
   ipcMain.on('start-download', (event, { wallpapers, dirPath }) => {
@@ -49,7 +50,7 @@ async function createWindow () {
     window.loadURL('http://localhost:8080/')
     window.webContents.openDevTools()
   } else {
-    window.loadFile('index.html')
+    window.loadFile(resolve(__dirname, './index.html'))
   }
 }
 
