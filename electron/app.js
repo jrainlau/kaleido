@@ -1,7 +1,9 @@
-const { app, BrowserWindow, ipcMain, Menu } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron')
 const { download } = require('electron-dl')
 const { versionDiff, autoUpdate } = require('./autoUpdate')
 const { resolve } = require('path')
+
+let window = null
 
 function ipcMessager (window) {
   ipcMain.on('start-download', (event, { wallpapers, dirPath }) => {
@@ -32,15 +34,46 @@ function ipcMessager (window) {
   })
 }
 
-async function createWindow () {
-  Menu.setApplicationMenu(null)
+const menus = Menu.buildFromTemplate([
+  {
+    label: 'Kaleido',
+    submenu: [{
+      label: 'About',
+      click () {
+        shell.openExternal('https://github.com/jrainlau/kaleido')
+      }
+    }, {
+      type: 'separator'
+    }, {
+      label: 'Source',
+      click () {
+        shell.openExternal('http://wallpaperswide.com/')
+      }
+    }, {
+      label: 'Privacy policy',
+      click () {
+        shell.openExternal('http://wallpaperswide.com/policy.html')
+      }
+    }, {
+      type: 'separator'
+    }, {
+      role: 'toggledevtools'
+    }, {
+      type: 'separator'
+    }, {
+      role: 'reload'
+    }, {
+      role: 'quit'
+    }]
+  }
+])
 
-  const window = new BrowserWindow({
+async function createWindow () {
+  Menu.setApplicationMenu(menus)
+
+  window = new BrowserWindow({
     width: 1152,
-    height: 720,
-    webPreferences: process.env.NODE_ENV === 'DEV' ? {} : {
-      devTools: false
-    }
+    height: 720
   })
 
   ipcMessager(window)

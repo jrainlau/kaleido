@@ -2,7 +2,7 @@
   <div class="display">
     <el-row :gutter="15">
       <template v-for="(wallpaper, index) in allPreloadWallpapers">
-        <el-col :xs="12" :sm="6" :md="6" :lg="6" :xl="6" :key="index">
+        <el-col :span="6" :key="index">
           <Wallpaper :wallpaper="wallpaper" />
         </el-col>
       </template>
