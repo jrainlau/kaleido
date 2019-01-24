@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.5.0"></a>
+# [0.5.0](https://github.com/jrainlau/kaleido/compare/v0.4.1...v0.5.0) (2019-01-24)
+
+
+### Features
+
+* optimize packaging processing ([9e527e8](https://github.com/jrainlau/kaleido/commit/9e527e8))
+* Resolution filter enabled; Menu enabled ([cba6dd3](https://github.com/jrainlau/kaleido/commit/cba6dd3))
+
+
+
 <a name="0.4.1"></a>
 ## [0.4.1](https://github.com/jrainlau/kaleido/compare/v0.4.0...v0.4.1) (2019-01-24)
 
