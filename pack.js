@@ -6,7 +6,10 @@ const execCmd = (cmd) => {
   return new Promise((resolve, reject) => {
     console.log(`Running command "${cmd}"`)
     exec(cmd, (err, stout, sterr) => {
-      if (err) reject(sterr)
+      if (err) {
+        console.error(sterr)
+        reject(sterr)
+      }
       console.log(stout)
       resolve(stout)
     })
