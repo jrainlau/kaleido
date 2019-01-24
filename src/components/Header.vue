@@ -79,7 +79,10 @@ export default {
       dialog.showSaveDialog({
         defaultPath: 'kaleido_wallpapers'
       }, (dirPath) => {
-        if (!dirPath) return
+        if (!dirPath) {
+          this.$store.commit('SET_LOADING', false)
+          return
+        }
         const res = ipcRenderer.sendSync('start-download', {
           wallpapers: this.preloadWallpapers,
           dirPath
