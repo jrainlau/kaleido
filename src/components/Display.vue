@@ -1,6 +1,6 @@
 <template>
   <div class="display">
-    <Pagination />
+    <i ref="target"></i>
     <el-row :gutter="15">
       <template v-for="(wallpaper, index) in onShowWallpapers">
         <el-col :span="12" :key="index">
@@ -8,7 +8,7 @@
         </el-col>
       </template>
     </el-row>
-    <Pagination />
+    <Pagination @current-page-change="scrollTop" />
   </div>
 </template>
 
@@ -24,15 +24,20 @@ export default {
   },
   computed: {
     ...mapState(['onShowWallpapers'])
+  },
+  methods: {
+    scrollTop () {
+      document.querySelector('.content').scrollTop = 0
+    }
   }
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .display {
   box-sizing: border-box;
-  padding: 10px;
   background: #eee;
+  padding: 10px;
   min-height: 100%;
 }
 </style>

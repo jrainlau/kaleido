@@ -25,7 +25,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .display {
   box-sizing: border-box;
   padding: 10px;

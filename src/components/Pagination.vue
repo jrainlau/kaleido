@@ -36,6 +36,7 @@ export default {
     currentPage (val) {
       const newSrc = this.currentPageSrc.replace(/page\/\d+/g, `page/${this.currentPage}`)
       this.$store.commit('UPDATE_WEBVIEW_SRC', newSrc)
+      this.$emit('current-page-change', val)
     },
     currentPageSrc (val) {
       this.currentPage = val.split('page/')[1] ? Number(val.split('page/')[1]) : 1

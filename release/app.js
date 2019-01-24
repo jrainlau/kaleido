@@ -5,17 +5,21 @@ const { resolve } = require('path')
 
 let window = null
 
+async function downloader (url, dirPath) {
+  const result = await download(BrowserWindow.getFocusedWindow(), url, {
+    directory: dirPath
+  })
+  return result
+}
+
 function ipcMessager (window) {
-  ipcMain.on('start-download', (event, { wallpapers, dirPath }) => {
+  ipcMain.on('start-download', async (event, { wallpapers, dirPath }) => {
     console.log(wallpapers, dirPath)
-    Promise
-      .all(wallpapers.map(x => download(BrowserWindow.getFocusedWindow(), x, {
-        saveAs: false,
-        directory: dirPath
-      })))
-      .then(() => {
-        event.returnValue = 'Download completed!'
-      })
+    while (wallpapers.length) {
+      const url = wallpapers.shift()
+      await downloader(url, dirPath)
+    }
+    event.returnValue = 'Download completed!'
   })
 
   ipcMain.on('check-update', async (event) => {

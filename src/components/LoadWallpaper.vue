@@ -132,7 +132,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .load-wallpaper {
   width: 100%;
   position: absolute;
