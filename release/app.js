@@ -11,8 +11,7 @@ function ipcMessager (window) {
     Promise
       .all(wallpapers.map(x => download(BrowserWindow.getFocusedWindow(), x, {
         saveAs: false,
-        directory: dirPath,
-        openFolderWhenDone: true
+        directory: dirPath
       })))
       .then(() => {
         event.returnValue = 'Download completed!'
