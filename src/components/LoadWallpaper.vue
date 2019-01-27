@@ -32,7 +32,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['webviewSrc', 'currentPageSrc', 'loadedCategories', 'onShowWallpapers'])
+    ...mapState(['webviewSrc', 'currentPageSrc', 'loadedUrls', 'onShowWallpapers'])
   },
   watch: {
     webviewSrc (val) {
@@ -45,20 +45,20 @@ export default {
       const pageCountArr = val.match(/\d+/g)
       const pageCount = pageCountArr[pageCountArr.length - 1]
       const preloadSrc = val.replace(/page\/\d+/g, `page/${Number(pageCount) + 1}`)
-      if (!this.loadedCategories[preloadSrc] && Number(pageCount) <= Number(this.onShowWallpapers[0].total)) {
+      if (!this.loadedUrls[preloadSrc] && Number(pageCount) <= Number(this.onShowWallpapers[0].total)) {
         this.preloadQueue.push(preloadSrc)
       }
       this.$nextTick(this.preloadWebview)
     }
   },
   async mounted () {
-    const loadedCategories = await this.$store.dispatch('initCache')
-    if (!Object.keys(loadedCategories).length) {
+    const loadedUrls = await this.$store.dispatch('initCache')
+    if (!Object.keys(loadedUrls).length) {
       this.initWebview = true
       this.$nextTick(this.loadWebview)
     }
     const TEMP_PRELOAD_URL = 'http://wallpaperswide.com/page/2'
-    if (!loadedCategories[TEMP_PRELOAD_URL]) {
+    if (!loadedUrls[TEMP_PRELOAD_URL]) {
       this.preloadQueue.push(TEMP_PRELOAD_URL)
       this.$nextTick(this.preloadWebview)
     }

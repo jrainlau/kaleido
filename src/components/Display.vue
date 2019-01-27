@@ -1,6 +1,5 @@
 <template>
   <div class="display">
-    <i ref="target"></i>
     <el-row :gutter="15">
       <template v-for="(wallpaper, index) in onShowWallpapers">
         <el-col :span="12" :key="index">

@@ -6,12 +6,12 @@ Vue.use(Vuex)
 
 async function loadCache () {
   const rawData = (await DB.find({}))[0] || {}
-  const loadedCategories = {}
+  const loadedUrls = {}
   Object.keys(rawData).forEach(key => {
     if (key === '_id') return
-    loadedCategories[key.replace('@', '.')] = rawData[key]
+    loadedUrls[key.replace('@', '.')] = rawData[key]
   })
-  return loadedCategories
+  return loadedUrls
 }
 
 async function initCache () {
@@ -34,7 +34,7 @@ const BASE_URL = 'http://wallpaperswide.com/page/1'
 
 export default new Vuex.Store({
   state: {
-    loadedCategories: {},
+    loadedUrls: {},
     onShowWallpapers: [],
     loadedWallpapers: [],
     currentPageSrc: BASE_URL,
@@ -45,7 +45,7 @@ export default new Vuex.Store({
   },
   mutations: {
     INIT_CATEGORY (_state, categories) {
-      _state.loadedCategories = categories
+      _state.loadedUrls = categories
       if (categories[BASE_URL]) {
         _state.onShowWallpapers = categories[BASE_URL].wallpapers
         _state.pageTotal = Number(categories[BASE_URL].wallpapers[0].total)
@@ -59,15 +59,15 @@ export default new Vuex.Store({
       _state.loading = val
     },
     LOAD_CATEGORY (_state, { src, cate }) {
-      Vue.set(_state.loadedCategories, src, cate)
+      Vue.set(_state.loadedUrls, src, cate)
       _state.onShowWallpapers = cate.wallpapers
       _state.loadedWallpapers = _state.loadedWallpapers.concat(cate.wallpapers)
     },
     UPDATE_WEBVIEW_SRC (_state, src) {
-      if (!_state.loadedCategories[src]) {
+      if (!_state.loadedUrls[src]) {
         _state.webviewSrc = src
       } else {
-        _state.onShowWallpapers = _state.loadedCategories[src].wallpapers
+        _state.onShowWallpapers = _state.loadedUrls[src].wallpapers
       }
       _state.currentPageSrc = src
     },
@@ -83,15 +83,15 @@ export default new Vuex.Store({
       _state.preloadWallpapers = []
     },
     PRELOAD_CATE (_state, { src, cate }) {
-      Vue.set(_state.loadedCategories, src, cate)
+      Vue.set(_state.loadedUrls, src, cate)
       _state.loadedWallpapers = _state.loadedWallpapers.concat(cate.wallpapers)
     }
   },
   actions: {
     async initCache ({ commit }) {
-      const loadedCategories = await loadCache()
-      commit('INIT_CATEGORY', loadedCategories)
-      return loadedCategories
+      const loadedUrls = await loadCache()
+      commit('INIT_CATEGORY', loadedUrls)
+      return loadedUrls
     },
     async loadCategory ({ commit }, { src, cate }) {
       await updateCache(src, cate)
@@ -110,7 +110,7 @@ export default new Vuex.Store({
   },
   getters: {
     allPreloadWallpapers (_state) {
-      const allloadedWallpapers = [].concat(...Object.keys(_state.loadedCategories).map(key => _state.loadedCategories[key].wallpapers))
+      const allloadedWallpapers = [].concat(...Object.keys(_state.loadedUrls).map(key => _state.loadedUrls[key].wallpapers))
       return allloadedWallpapers.filter(({ downloadUrl }) => _state.preloadWallpapers.includes(downloadUrl))
     }
   }
