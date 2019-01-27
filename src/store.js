@@ -44,11 +44,11 @@ export default new Vuex.Store({
     pageTotal: 0
   },
   mutations: {
-    INIT_CATEGORY (_state, categories) {
-      _state.loadedUrls = categories
-      if (categories[BASE_URL]) {
-        _state.onShowWallpapers = categories[BASE_URL].wallpapers
-        _state.pageTotal = Number(categories[BASE_URL].wallpapers[0].total)
+    INIT_LOADED_URLS (_state, loadedUrls) {
+      _state.loadedUrls = loadedUrls
+      if (loadedUrls[BASE_URL]) {
+        _state.onShowWallpapers = loadedUrls[BASE_URL].wallpapers
+        _state.pageTotal = Number(loadedUrls[BASE_URL].wallpapers[0].total)
         _state.loadedWallpapers = _state.loadedWallpapers.concat(_state.onShowWallpapers)
       }
     },
@@ -58,7 +58,7 @@ export default new Vuex.Store({
     SET_LOADING (_state, val) {
       _state.loading = val
     },
-    LOAD_CATEGORY (_state, { src, cate }) {
+    LOAD_URL (_state, { src, cate }) {
       Vue.set(_state.loadedUrls, src, cate)
       _state.onShowWallpapers = cate.wallpapers
       _state.loadedWallpapers = _state.loadedWallpapers.concat(cate.wallpapers)
@@ -82,7 +82,7 @@ export default new Vuex.Store({
     CLEAR_PRELOAD_WALLPAPERS (_state) {
       _state.preloadWallpapers = []
     },
-    PRELOAD_CATE (_state, { src, cate }) {
+    PRELOAD_URL (_state, { src, cate }) {
       Vue.set(_state.loadedUrls, src, cate)
       _state.loadedWallpapers = _state.loadedWallpapers.concat(cate.wallpapers)
     }
@@ -90,19 +90,19 @@ export default new Vuex.Store({
   actions: {
     async initCache ({ commit }) {
       const loadedUrls = await loadCache()
-      commit('INIT_CATEGORY', loadedUrls)
+      commit('INIT_LOADED_URLS', loadedUrls)
       return loadedUrls
     },
-    async loadCategory ({ commit }, { src, cate }) {
+    async loadUrl ({ commit }, { src, cate }) {
       await updateCache(src, cate)
-      commit('LOAD_CATEGORY', { src, cate })
+      commit('LOAD_URL', { src, cate })
       if (cate.wallpapers[0].total) {
         commit('UPDATE_PAGE_TOTAL', Number(cate.wallpapers[0].total))
       }
     },
-    async preloadCate ({ commit }, { src, cate }) {
+    async preloadUrl ({ commit }, { src, cate }) {
       await updateCache(src, cate)
-      commit('PRELOAD_CATE', { src, cate })
+      commit('PRELOAD_URL', { src, cate })
     },
     async clearCache () {
       await DB.remove({}, { multi: true })

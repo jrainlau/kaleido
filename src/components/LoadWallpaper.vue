@@ -97,7 +97,7 @@ export default {
       })
       webview.addEventListener('dom-ready', () => {
         webview.getWebContents().executeJavaScript(inject, false, (res) => {
-          this.$store.dispatch('loadCategory', {
+          this.$store.dispatch('loadUrl', {
             src: this.webviewSrc,
             cate: res
           })
@@ -119,7 +119,7 @@ export default {
           webview.getWebContents().executeJavaScript(inject, false, (res) => {
             console.log('Preload finished!')
             preloadLock = false
-            this.$store.dispatch('preloadCate', {
+            this.$store.dispatch('preloadUrl', {
               src: this.preloadSrc,
               cate: res
             })
