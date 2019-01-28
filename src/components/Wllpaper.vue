@@ -28,9 +28,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(['preloadWallpapers']),
+    ...mapState(['pendingDownloadList']),
     checked () {
-      return new Set(this.preloadWallpapers).has(this.wallpaper.downloadUrl)
+      return new Set(this.pendingDownloadList).has(this.wallpaper.downloadUrl)
     }
   },
   methods: {

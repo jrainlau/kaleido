@@ -1,7 +1,7 @@
 <template>
   <div class="display">
     <el-row :gutter="15">
-      <template v-for="(wallpaper, index) in allPreloadWallpapers">
+      <template v-for="(wallpaper, index) in allpendingDownloadList">
         <el-col :span="6" :key="index">
           <Wallpaper :wallpaper="wallpaper" />
         </el-col>
@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     ...mapState(['loading']),
-    ...mapGetters(['allPreloadWallpapers'])
+    ...mapGetters(['allpendingDownloadList'])
   }
 }
 </script>

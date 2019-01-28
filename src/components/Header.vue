@@ -7,11 +7,11 @@
       <a class="header-tools-github" href="javascript:void(0)" title="Github" @click="toGithub">
         <img :src="require('@/assets/imgs/github.png')" alt="">
       </a>
-      <el-button :disabled="!preloadWallpapers.length" size="mini" type="primary" round @click="download">
+      <el-button :disabled="!pendingDownloadList.length" size="mini" type="primary" round @click="download">
         Download
       </el-button>
-      <el-badge class="header-tools-selected" :hidden="!preloadWallpapers.length" :value="preloadWallpapers.length">
-        <el-button :disabled="!preloadWallpapers.length" size="mini" type="plain" round @click="toPreload">
+      <el-badge class="header-tools-selected" :hidden="!pendingDownloadList.length" :value="pendingDownloadList.length">
+        <el-button :disabled="!pendingDownloadList.length" size="mini" type="plain" round @click="toPreload">
           Selected
         </el-button>
       </el-badge>
@@ -55,7 +55,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['preloadWallpapers'])
+    ...mapState(['pendingDownloadList'])
   },
   mounted () {
     ipcRenderer.on('updating', (event, args) => {
@@ -84,7 +84,7 @@ export default {
           return
         }
         const res = ipcRenderer.sendSync('start-download', {
-          wallpapers: this.preloadWallpapers,
+          wallpapers: this.pendingDownloadList,
           dirPath
         })
         if (res) {

@@ -39,7 +39,7 @@ export default new Vuex.Store({
     loadedWallpapers: [],
     currentPageSrc: BASE_URL,
     webviewSrc: BASE_URL,
-    preloadWallpapers: [],
+    pendingDownloadList: [],
     loading: false,
     pageTotal: 0
   },
@@ -72,15 +72,15 @@ export default new Vuex.Store({
       _state.currentPageSrc = src
     },
     ADD_TO_SELECTED (_state, url) {
-      _state.preloadWallpapers.push(url)
+      _state.pendingDownloadList.push(url)
     },
     DELETE_FROM_SELECTED (_state, url) {
-      const preloadSet = new Set(_state.preloadWallpapers)
+      const preloadSet = new Set(_state.pendingDownloadList)
       preloadSet.delete(url)
-      _state.preloadWallpapers = [...preloadSet]
+      _state.pendingDownloadList = [...preloadSet]
     },
     CLEAR_PRELOAD_WALLPAPERS (_state) {
-      _state.preloadWallpapers = []
+      _state.pendingDownloadList = []
     },
     PRELOAD_URL (_state, { src, cate }) {
       Vue.set(_state.loadedUrls, src, cate)
@@ -109,9 +109,9 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    allPreloadWallpapers (_state) {
+    allpendingDownloadList (_state) {
       const allloadedWallpapers = [].concat(...Object.keys(_state.loadedUrls).map(key => _state.loadedUrls[key].wallpapers))
-      return allloadedWallpapers.filter(({ downloadUrl }) => _state.preloadWallpapers.includes(downloadUrl))
+      return allloadedWallpapers.filter(({ downloadUrl }) => _state.pendingDownloadList.includes(downloadUrl))
     }
   }
 })

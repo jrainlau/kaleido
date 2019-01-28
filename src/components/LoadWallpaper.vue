@@ -42,8 +42,7 @@ export default {
       }
     },
     currentPageSrc (val) {
-      const pageCountArr = val.match(/\d+/g)
-      const pageCount = pageCountArr[pageCountArr.length - 1]
+      const pageCount = val.match(/\d+$/g)[0]
       const preloadSrc = val.replace(/page\/\d+/g, `page/${Number(pageCount) + 1}`)
       if (!this.loadedUrls[preloadSrc] && Number(pageCount) <= Number(this.onShowWallpapers[0].total)) {
         this.preloadQueue.push(preloadSrc)
