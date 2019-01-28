@@ -7,7 +7,10 @@ let window = null
 
 async function downloader (url, dirPath) {
   const result = await download(BrowserWindow.getFocusedWindow(), url, {
-    directory: dirPath
+    directory: dirPath,
+    onProgress (progress) {
+      window.webContents.send('downloading', { url, progress })
+    }
   })
   return result
 }
@@ -19,7 +22,7 @@ function ipcMessager (window) {
       const url = wallpapers.shift()
       await downloader(url, dirPath)
     }
-    event.returnValue = 'Download completed!'
+    event.sender.send('download-finished')
   })
 
   ipcMain.on('check-update', async (event) => {

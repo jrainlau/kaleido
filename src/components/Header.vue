@@ -11,7 +11,7 @@
         Download
       </el-button>
       <el-badge class="header-tools-selected" :hidden="!pendingDownloadList.length" :value="pendingDownloadList.length">
-        <el-button :disabled="!pendingDownloadList.length" size="mini" type="plain" round @click="toPreload">
+        <el-button :disabled="!pendingDownloadList.length || disableDownloadBtn" size="mini" type="plain" round @click="toPreload">
           Selected
         </el-button>
       </el-badge>
@@ -35,6 +35,17 @@
         </div>
       </el-popover>
     </div>
+
+    <div class="download-progress" v-if="downloadingUrl">
+      <div class="download-progress-wrap">
+        <span class="download-progress-wrap-title">{{downloadingUrl}}</span>
+        <el-progress
+          class="download-progress-wrap-bar"
+          :stroke-width="18"
+          :percentage="downloadingProgress"
+          :show-text="false"></el-progress>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -51,7 +62,10 @@ export default {
       latestVersion: '',
       showUpdatePanel: false,
       showRelaunchBtn: false,
-      updatingMsgs: []
+      updatingMsgs: [],
+      downloadingUrl: '',
+      downloadingProgress: 0,
+      disableDownloadBtn: false
     }
   },
   computed: {
@@ -62,12 +76,33 @@ export default {
       console.log(args)
       this.updatingMsgs.push(args)
     })
+
     ipcRenderer.on('update-result', (event, args) => {
       console.log(args)
       if (args.update === 'successed') {
         this.showRelaunchBtn = true
       }
     })
+
+    ipcRenderer.on('downloading', (event, args) => {
+      const url = args.url.replace('http://wallpaperswide.com/download/', '')
+      this.downloadingUrl = `Downloading ${url}......${args.progress * 100}%`
+      this.downloadingProgress = args.progress * 100
+    })
+
+    ipcRenderer.on('download-finished', (event, args) => {
+      this.$store.commit('CLEAR_PRELOAD_WALLPAPERS')
+      this.downloadingUrl = ''
+      this.downloadingProgress = 0
+      this.disableDownloadBtn = false
+      this.$message({
+        message: 'Download completed!',
+        type: 'success'
+      })
+      this.$store.commit('SET_LOADING', false)
+      this.$router.push('/')
+    })
+
     const res = ipcRenderer.sendSync('check-update')
     this.versionMatch = res.match
     this.currentVersion = res.currentVersion
@@ -75,7 +110,6 @@ export default {
   },
   methods: {
     download () {
-      this.$store.commit('SET_LOADING', true)
       dialog.showSaveDialog({
         defaultPath: 'kaleido_wallpapers'
       }, (dirPath) => {
@@ -83,19 +117,11 @@ export default {
           this.$store.commit('SET_LOADING', false)
           return
         }
-        const res = ipcRenderer.sendSync('start-download', {
+        this.disableDownloadBtn = true
+        ipcRenderer.send('start-download', {
           wallpapers: this.pendingDownloadList,
           dirPath
         })
-        if (res) {
-          this.$store.commit('CLEAR_PRELOAD_WALLPAPERS')
-          this.$message({
-            message: 'Download completed!',
-            type: 'success'
-          })
-          this.$store.commit('SET_LOADING', false)
-          this.$router.push('/')
-        }
       })
     },
     toPreload () {
@@ -210,6 +236,26 @@ export default {
     &-proccessing {
       p {
         font-style: italic;
+      }
+    }
+  }
+  .download-progress {
+    position: absolute;
+    width: 100%;
+    bottom: -18px;
+    z-index: 9999;
+    &-wrap {
+      position: relative;
+      &-title {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: block;
+        height: 18px;
+        line-height: 18px;
+        z-index: 100;
+        font-size: 12px;
+        color: #303133;
       }
     }
   }
