@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/jrainlau/kaleido/compare/v0.5.4...v0.6.0) (2019-01-28)
+
+
+### Features
+
+* download progress ([a8b12d1](https://github.com/jrainlau/kaleido/commit/a8b12d1))
+
+
+
 <a name="0.5.4"></a>
 ## [0.5.4](https://github.com/jrainlau/kaleido/compare/v0.5.3...v0.5.4) (2019-01-24)
 
