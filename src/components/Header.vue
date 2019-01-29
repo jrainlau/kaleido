@@ -99,7 +99,6 @@ export default {
         message: 'Download completed!',
         type: 'success'
       })
-      this.$store.commit('SET_LOADING', false)
       this.$router.push('/')
     })
 
@@ -114,7 +113,6 @@ export default {
         defaultPath: 'kaleido_wallpapers'
       }, (dirPath) => {
         if (!dirPath) {
-          this.$store.commit('SET_LOADING', false)
           return
         }
         this.disableDownloadBtn = true
